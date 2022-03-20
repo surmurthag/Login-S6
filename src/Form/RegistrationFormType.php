@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,18 +40,20 @@ class RegistrationFormType extends AbstractType
     ]
             ])
 
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
+            ->add('Password', RepeatedType::class, [
+
+                'type' => PasswordType::class,
+                'invalid_message' => 'Le mot de passe et la confirmation doivent être identique',
                 'label' => 'votre mot de passe',
-                'mapped' => false,
+                'first_options' => [ 'label' => 'Mot de passe'],
+                'second_options' => [ 'label' => 'confirmer votre mot de passe'],
                 'attr' => [
-                    'placeholder' => 'Merci de saisir un mot de passe' ,
                     'autocomplete' => 'new-password'],
                     'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer un mot de passe',
                     ]),
+
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Votre mot de passe doit être au moins {{ limit }} caractères',
@@ -59,13 +62,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('password_confirm', PasswordType::class, [
-                'label' => 'Confirmez votre mot de passe',
-                'mapped' => false,
-                'attr' => [
-                    'placeholder' => 'Confirmez votre mot de passe'
-                ]
-            ])
+
             ->add('agreeTerms', CheckboxType::class, [
                 'label' => 'Accepter les conditions',
                 'mapped' => false,
